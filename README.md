@@ -62,7 +62,7 @@ k8s-eso-demo/
 │   ├── setup-azure-secret.sh      # สร้าง SP secret + Azure SecretStore
 │   ├── setup-aws-secret.sh        # สร้าง AWS credentials secret + AWS SecretStore
 │   ├── switch-vault.sh            # สลับ provider (azure ↔ aws)
-│   ├── build-and-load.sh          # Build Docker image
+│   ├── build-and-load.sh          # Build Docker image (local)
 │   └── teardown-eso.sh            # ลบทุกอย่าง
 ├── Cargo.toml
 ├── Dockerfile                     # Multi-stage build (Rust → Alpine)
@@ -179,13 +179,25 @@ kubectl get secretstore aws-secretsmanager-store -n eso-demo
 
 **Build Docker image:**
 ```bash
+# Build image สำหรับ Docker Desktop Kubernetes
+docker build -t eso-demo:v2 .
+
+# หรือใช้ script (แต่ต้องแก้ tag ใน deployment.yaml)
 ./scripts/build-and-load.sh
 ```
+
+> **หมายเหตุ:** ใช้ image tag เฉพาะเวอร์ชัน (เช่น `v2`) แทน `latest` เพื่อหลีกเลี่ยงปัญหา cache ของ Kubernetes
 
 **Deploy:**
 ```bash
 kubectl apply -f k8s/namespace.yaml
 kubectl apply -f k8s/deployment.yaml
+```
+
+**ตรวจสอบสถานะ:**
+```bash
+kubectl get pods -n eso-demo
+# ต้องเห็น STATUS: Running (ไม่ใช่ Completed หรือ CrashLoopBackOff)
 ```
 
 **ดู log:**
@@ -202,7 +214,10 @@ Pod: eso-demo-xxxxxxxxx-xxxxx
 [OK] API_KEY     (from AKV key: demo-api-key)     = az************
 
 All secrets loaded successfully from Azure Key Vault via ESO.
+App is running. Press Ctrl+C to stop.
 ```
+
+> **หมายเหตุ:** Application จะรันต่อเนื่อง (infinite loop) เพื่อให้ pod อยู่ในสถานะ Running
 
 ---
 
@@ -239,6 +254,7 @@ Pod: eso-demo-yyyyyyyyy-yyyyy
 [OK] API_KEY     (from AKV key: demo-api-key)     = aw************
 
 All secrets loaded successfully from Azure Key Vault via ESO.
+App is running. Press Ctrl+C to stop.
 ```
 
 #### Switch กลับจาก AWS → Azure
