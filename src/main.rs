@@ -40,6 +40,13 @@ fn main() {
     println!();
     if all_ok {
         println!("All secrets loaded successfully from Azure Key Vault via ESO.");
+        println!("App is running. Press Ctrl+C to stop.");
+        println!();
+        
+        // Keep the app running
+        loop {
+            std::thread::sleep(std::time::Duration::from_secs(3600));
+        }
     } else {
         println!("ERROR: One or more secrets are missing. Check SecretStore/ExternalSecret status.");
         std::process::exit(1);

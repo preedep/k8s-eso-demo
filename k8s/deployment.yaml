@@ -15,22 +15,10 @@ spec:
       labels:
         app: eso-demo
     spec:
-      # รอให้ secret พร้อมก่อน pod start
-      initContainers:
-        - name: wait-for-secret
-          image: bitnami/kubectl:latest
-          command:
-            - sh
-            - -c
-            - |
-              until kubectl get secret demo-app-secret -n eso-demo 2>/dev/null; do
-                echo "Waiting for demo-app-secret..."; sleep 3;
-              done
-          # ต้องการ RBAC: ServiceAccount ที่มีสิทธิ์ get secret (ดู rbac.yaml)
       containers:
         - name: eso-demo
-          image: eso-demo:latest         # เปลี่ยนเป็น image ของคุณหลัง docker build
-          imagePullPolicy: Never         # ใช้ local image จาก Docker Desktop
+          image: eso-demo:v2
+          imagePullPolicy: IfNotPresent
           env:
             - name: DB_PASSWORD
               valueFrom:

@@ -37,6 +37,9 @@ helm upgrade --install external-secrets external-secrets/external-secrets \
   --version "${ESO_CHART_VERSION}" \
   --set installCRDs=true \
   --set webhook.port=9443 \
+  --set image.repository=ghcr.io/external-secrets/external-secrets \
+  --set webhook.image.repository=ghcr.io/external-secrets/external-secrets \
+  --set certController.image.repository=ghcr.io/external-secrets/external-secrets \
   --wait \
   --timeout 5m
 
