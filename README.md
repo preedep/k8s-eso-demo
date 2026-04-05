@@ -53,8 +53,8 @@ k8s-eso-demo/
 │   ├── namespace.yaml             # Namespace: eso-demo
 │   ├── deployment.yaml            # Deployment (ไม่เปลี่ยนเมื่อ switch provider)
 │   ├── demo-pod.yaml              # Pod เดี่ยวสำหรับทดสอบเร็ว
-│   ├── secret-store.yaml          # SecretStore → Azure Key Vault
-│   ├── external-secret.yaml       # ExternalSecret (Azure) → demo-app-secret
+│   ├── azure-secret-store.yaml    # SecretStore → Azure Key Vault
+│   ├── azure-external-secret.yaml # ExternalSecret (Azure) → demo-app-secret
 │   ├── aws-secret-store.yaml      # SecretStore → AWS Secrets Manager
 │   └── aws-external-secret.yaml   # ExternalSecret (AWS) → demo-app-secret (ชื่อเดียวกัน)
 ├── scripts/
@@ -124,7 +124,7 @@ kubectl get secretstore azure-keyvault-store -n eso-demo
 
 **Apply ExternalSecret:**
 ```bash
-kubectl apply -f k8s/external-secret.yaml
+kubectl apply -f k8s/azure-external-secret.yaml
 kubectl get externalsecret demo-secret -n eso-demo
 # READY ต้องเป็น True
 ```

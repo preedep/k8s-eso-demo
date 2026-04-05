@@ -63,4 +63,4 @@ kubectl get secretstore azure-keyvault-store -n "${DEMO_NAMESPACE}"
 
 echo ""
 echo ">>> Done. Now apply the ExternalSecret:"
-echo "    kubectl apply -f k8s/external-secret.yaml"
+echo "    kubectl apply -f k8s/azure-external-secret.yaml"

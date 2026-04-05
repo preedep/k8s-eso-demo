@@ -124,7 +124,7 @@ echo ""
 echo ">>> Step 2: Apply ExternalSecret สำหรับ ${PROVIDER}..."
 case "${PROVIDER}" in
   azure)
-    kubectl apply -f "${K8S_DIR}/external-secret.yaml"
+    kubectl apply -f "${K8S_DIR}/azure-external-secret.yaml"
     ;;
   aws)
     kubectl apply -f "${K8S_DIR}/aws-external-secret.yaml"
