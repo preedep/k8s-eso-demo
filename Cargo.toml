@@ -1,0 +1,10 @@
+[package]
+name = "k8s-eso-demo"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "eso-demo"
+path = "src/main.rs"
+
+[dependencies]

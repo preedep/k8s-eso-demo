@@ -1,0 +1,52 @@
+# Deployment สำหรับ Rust app ที่อ่าน secret ผ่าน env variable
+# Secret 'demo-app-secret' ถูกสร้างโดย ESO จาก Azure Key Vault
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eso-demo
+  namespace: eso-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eso-demo
+  template:
+    metadata:
+      labels:
+        app: eso-demo
+    spec:
+      # รอให้ secret พร้อมก่อน pod start
+      initContainers:
+        - name: wait-for-secret
+          image: bitnami/kubectl:latest
+          command:
+            - sh
+            - -c
+            - |
+              until kubectl get secret demo-app-secret -n eso-demo 2>/dev/null; do
+                echo "Waiting for demo-app-secret..."; sleep 3;
+              done
+          # ต้องการ RBAC: ServiceAccount ที่มีสิทธิ์ get secret (ดู rbac.yaml)
+      containers:
+        - name: eso-demo
+          image: eso-demo:latest         # เปลี่ยนเป็น image ของคุณหลัง docker build
+          imagePullPolicy: Never         # ใช้ local image จาก Docker Desktop
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: demo-app-secret  # Secret ที่ ESO สร้าง
+                  key: db-password
+            - name: API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: demo-app-secret
+                  key: api-key
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      restartPolicy: Always
